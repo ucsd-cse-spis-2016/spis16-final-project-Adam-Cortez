@@ -2,4 +2,7 @@
 body {
     background-color: #eef;
     color: black;
+    #editor-container {
+	  height: 375px;
+     }
 }
