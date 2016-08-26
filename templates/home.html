@@ -1,12 +1,10 @@
 {%  extends "layout.html" %}
 
- {%  block title %}Home{%  endblock %}
+	{%  block title %}Home{%  endblock %}
 
- {%  block content %}
-  <h1>Home</h1>
-  <ul>
-    <li><a href="/ctof">Convert celsius to Fahrenheit</a></li>
-    <li><a href="/ftoc">Convert Fahrenheit to Celsius</a></li>
-    <li><a href="/mtokm">Convert Miles to Kilometers</a></li>
-  </ul>
- {%  endblock %}
+	{%  block content %}
+ 		<h1>Notes</h1>
+  		<textarea id=”widgEditor”>Some Sample Text</textarea>
+		<link rel=”stylesheet” href=”widgEditor/css/widgEditor.css” />
+		<script src=”widgEditor/scripts/widgEditor.js”></script>
+	{%  endblock %}
