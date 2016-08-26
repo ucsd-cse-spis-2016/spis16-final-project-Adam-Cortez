@@ -1,1 +1,3 @@
-# spis16-final-project-Adam-Cortez
+# spis16-webapps-Adam-Cortez
+
+https://github.com/ucsd-cse-spis-2016/spis16-project-planning-webapps-Adam-Cortez
