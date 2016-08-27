@@ -1,7 +1,0 @@
-{%  extends "layout.html" %}
-
-{%  block title %}Result of converting Miles to Kilometers{%  endblock %}
-
-{%  block content %}
-<p> In Miles: {{ distInMiles }}.  In Celsius: {{ distInKilometers }} </p>
-{%  endblock %}
