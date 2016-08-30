@@ -1,36 +1,11 @@
-{%  extends "layout.html" %}
+{% extends "layout.html" %}
 
-	{%  block title %}Home{%  endblock %}
+{% block title %}Home{% endblock %}
 
-	{%  block content %}
- 		<h1>Notes</h1>		
+{% block content %}
+  <h1>Home</h1>
 
-  		<!-- Include stylesheet -->
-		<link href="https://cdn.quilljs.com/1.0.0-rc.2/quill.snow.css" rel="stylesheet">
+<p>This is a note taking webapp created by Adam Shen and Cortez Page. Login to start.</p>
+<p><a href="https://github.com/ucsd-cse-spis-2016/spis16-webapps-Adam-Cortez">View Project on Github</a></p>
 
-		<!-- Create the editor container -->
-		<div id="editor"></div>
-
-		<!-- Include the Quill library -->
-		<script src="https://cdn.quilljs.com/1.0.0-rc.2/quill.js"></script>
-
-		<!-- Initialize Quill editor -->
-		<script type="text/javascript">
-		  var quill = new Quill('#editor',
-		  {
-	            modules:
-		    {
-  		      toolbar: [[{ 'size': ['small', false, 'large', 'huge'] }],
-				['bold', 'italic', 'underline', 'strike'], 
-  				[{ 'list': 'ordered'}, { 'list': 'bullet' }],
-  				[{ 'script': 'sub'}, { 'script': 'super' }],
-				[{ 'color': [] }], 
-  				[{ 'font': [] }],
-  				[{ 'align': [] }]]
-		    },
-		    placeholder: 'Type your note here',
-		    theme: 'snow'
-		  });
-		</script>
-
-	{%  endblock %}
+{% endblock %}

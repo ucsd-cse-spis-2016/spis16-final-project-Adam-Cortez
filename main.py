@@ -1,7 +1,9 @@
 from flask import Flask, redirect, url_for, session, request, jsonify, render_template, flash, Markup
 from flask_oauthlib.client import OAuth
-from github import Github 
- 
+from github import Github
+from flask_pymongo import PyMongo
+from flask_pymongo import ObjectId
+
 import pprint
 import os
 import sys
@@ -10,24 +12,32 @@ import traceback
 class GithubOAuthVarsNotDefined(Exception):
     '''raise this if the necessary env variables are not defined '''
 
-if os.getenv('GITHUB_CLIENT_ID') == None or \
-        os.getenv('GITHUB_CLIENT_SECRET') == None or \
-        os.getenv('APP_SECRET_KEY') == None or \
-        os.getenv('GITHUB_ORG') == None:
-    raise GithubOAuthVarsNotDefined('''
-      Please define environment variables:
-         GITHUB_CLIENT_ID
-         GITHUB_CLIENT_SECRET
-         GITHUB_ORG
-         APP_SECRET_KEY
-      ''')
+env_vars_needed = ['GITHUB_CLIENT_ID', 'GITHUB_CLIENT_SECRET',
+                   'APP_SECRET_KEY', 'GITHUB_ORG', 
+                   'MONGO_HOST', 'MONGO_PORT', 'MONGO_DBNAME', 
+                   'MONGO_USERNAME', 'MONGO_PASSWORD']
+
+for e in env_vars_needed: 
+    if os.getenv(e) == None:
+        raise GithubOAuthVarsNotDefined(
+            "Please define environment variables: \r\n" + 
+            pprint.pformat(env_vars_needed) + """
+For local operation, define in env.sh, then at command line, run:
+  . env.sh
+For Heroku, define variables via Settings=>Reveal Config Vars
+""" )
 
 app = Flask(__name__)
 
-app.debug = True
-
 app.secret_key = os.environ['APP_SECRET_KEY']
 oauth = OAuth(app)
+
+app.config['MONGO_HOST'] = os.environ['MONGO_HOST']
+app.config['MONGO_PORT'] = int(os.environ['MONGO_PORT'])
+app.config['MONGO_DBNAME'] = os.environ['MONGO_DBNAME']
+app.config['MONGO_USERNAME'] = os.environ['MONGO_USERNAME']
+app.config['MONGO_PASSWORD'] = os.environ['MONGO_PASSWORD']
+mongo = PyMongo(app)
 
 # This code originally from https://github.com/lepture/flask-oauthlib/blob/master/example/github.py
 # Edited by P. Conrad for SPIS 2016 to add getting Client Id and Secret from
@@ -47,15 +57,24 @@ github = oauth.remote_app(
 
 @app.context_processor
 def inject_logged_in():
-    return dict(logged_in=('github_token' in session))
+    return dict(logged_in=(is_logged_in()))
 
 @app.context_processor
 def inject_github_org():
     return dict(github_org=os.getenv('GITHUB_ORG'))
 
+def is_logged_in():
+    return 'github_token' in session
+
 @app.route('/')
+def start():
+	if not is_logged_in():
+    		return redirect(url_for('home')) 
+	return redirect(url_for('notes')) 
+
+@app.route('/home')
 def home():
-    return render_template('home.html')
+    	return render_template('home.html')
 
 @app.route('/login')
 def login():
@@ -113,25 +132,18 @@ def authorized():
     else:
         flash('You were successfully logged in')
 
-    return redirect(url_for('home'))    
-    
+    return redirect(url_for('home'))       
 
-
-@app.route('/page1')
-def renderPage1():
-    if 'user_data' in session:
-        user_data_pprint = pprint.pformat(session['user_data'])
-    else:
-        user_data_pprint = '';
-    return render_template('page1.html',dump_user_data=user_data_pprint)
-
-@app.route('/about')
-def renderAbout():
-    return render_template('about.html')
+@app.route('/notes')
+def notes():
+    if not is_logged_in():
+        flash("You must be logged in to do that",'error')
+        return redirect(url_for('home')) 
+    return render_template('notes.html')
 
 @github.tokengetter
 def get_github_oauth_token():
     return session.get('github_token')
 
 if __name__ == '__main__':
-    app.run(port=5000)
+    app.run(port=5000, debug=True) # change to False when running in production

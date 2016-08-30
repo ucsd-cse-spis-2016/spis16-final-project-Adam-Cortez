@@ -1,11 +1,11 @@
 body {
-
+	background-color: #eef;
 }
 
 #content {
-     margin-left: 20px;
+	margin-left: 20px;
 }
 
 div.flash-messages {
-  min-height: 4em;
+	min-height: 4em;
 }
