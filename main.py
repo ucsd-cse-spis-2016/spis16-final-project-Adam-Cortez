@@ -1,6 +1,6 @@
 from flask import Flask, redirect, url_for, session, request, jsonify, render_template, flash, Markup
 from flask_oauthlib.client import OAuth
-from github import Github
+#from github import Github
 from flask_pymongo import PyMongo
 from flask_pymongo import ObjectId
 
