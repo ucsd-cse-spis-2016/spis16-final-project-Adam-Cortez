@@ -143,7 +143,7 @@ def notes():
 
 		title = ""
 		content = ""
-	return render_template('notes.html', title=title, content=content)
+	return render_template('notes.html')
 
 @app.route('/write',methods=['POST'])
 def write():
