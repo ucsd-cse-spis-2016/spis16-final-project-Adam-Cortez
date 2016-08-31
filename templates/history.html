@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block title %}page1{% endblock %}
+
+{% block content %}
+<h1>History</h1>
+
+<table>
+  <tr>
+    <th>title</th>
+    <th>content</th>   
+  </tr>
+
+  {% for userinput in userinputs %}
+  <tr>
+    <td> {{ userinput.title }} </td>
+    <td><pre>{{ userinput.content }}</pre></td>
+  </tr>
+  {% endfor %}
+
+</table>
+
+{% endblock %}

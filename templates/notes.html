@@ -6,9 +6,11 @@
  		<h1>Notes</h1>		
 		
 		<form action="/write" method="POST">
-			<input name="title" id="title" width="30" ></input>
+
+			<input name="title" id="title" width="30" value = "{{title}}"></input>
 			<br>
-			<textarea name="content" id="content" cols="50" rows="4"></textarea>
+			<textarea name="content" id="content" cols="50" rows="4">{{content}}</textarea>
+
 			<input type="submit" value="Save">
 			<input type="button" onclick="window.href='/'" value="Cancel">
 		</form>
