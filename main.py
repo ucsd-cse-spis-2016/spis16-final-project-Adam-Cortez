@@ -139,10 +139,7 @@ def notes():
     if not is_logged_in():
         flash("You must be logged in to do that",'error')
         return redirect(url_for('home')) 
-	login = session['user_data']['login']
-
-		title = ""
-		content = ""
+	
 	return render_template('notes.html')
 
 @app.route('/write',methods=['POST'])
