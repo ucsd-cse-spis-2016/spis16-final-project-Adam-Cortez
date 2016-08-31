@@ -6,8 +6,9 @@
  		<h1>Notes</h1>		
 		
 		<form action="/write" method="POST">
-			<input name="title" id="title" width="30"></input>
-			<textarea name="content" id="content" cols="50" rows="4"></textarea>
+			<input name="title" id="title" width="30" value="get from db"></input>
+			<br>
+			<textarea name="content" id="content" cols="50" rows="4" value = "get from db"></textarea>
 			<input type="submit" value="Save">
 			<input type="button" onclick="window.href='/'" value="Cancel">
 		</form>
@@ -23,10 +24,9 @@
 		
 		<!-- Initialize Quill editor -->
 		<script type="text/javascript">
-		  var Delta = Quill.import('delta');
 		  var quill = new Quill('#editor',
 		  {
-	            modules:
+	        modules:
 		    {
   		      toolbar: [[{ 'size': ['small', false, 'large', 'huge'] }],
 				['bold', 'italic', 'underline', 'strike'], 
@@ -36,7 +36,6 @@
   				[{ 'font': [] }],
   				[{ 'align': [] }]]
 		    },
-		    placeholder: 'Type your note here',
 		    theme: 'snow'
 		  });
 		</script>
