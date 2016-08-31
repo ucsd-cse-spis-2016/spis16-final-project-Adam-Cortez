@@ -4,7 +4,14 @@
 
 	{%  block content %}
  		<h1>Notes</h1>		
-
+		
+		<form action="/write" method="POST">
+			<input name="title" id="title" width="30"></input>
+			<textarea name="content" id="content" cols="50" rows="4"></textarea>
+			<input type="submit" value="Save">
+			<input type="button" onclick="window.href='/'" value="Cancel">
+		</form>
+		
   		<!-- Include stylesheet -->
 		<link href="https://cdn.quilljs.com/1.0.0-rc.2/quill.snow.css" rel="stylesheet">
 
@@ -13,9 +20,10 @@
 
 		<!-- Include the Quill library -->
 		<script src="https://cdn.quilljs.com/1.0.0-rc.2/quill.js"></script>
-
+		
 		<!-- Initialize Quill editor -->
 		<script type="text/javascript">
+		  var Delta = Quill.import('delta');
 		  var quill = new Quill('#editor',
 		  {
 	            modules:

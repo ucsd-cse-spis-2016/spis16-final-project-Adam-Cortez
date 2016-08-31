@@ -141,6 +141,24 @@ def notes():
         return redirect(url_for('home')) 
     return render_template('notes.html')
 
+@app.route('/write',methods=['POST'])
+def write():
+    if not is_logged_in():
+        flash("You must be logged in to do that",'error')
+        return redirect(url_for('home'))    
+    title = request.form.get("title") # match "id", "name" in form
+    content = request.form.get("content") # match "id", "name" in form
+    login = session['user_data']['login']    
+    result = mongo.db.mycollection.insert_one(
+            {
+                "title"   : title, 
+                "content" : content,
+                "login"   : login
+            }
+        )
+    flash("Saved to database with oid=" + str(result.inserted_id))
+    return redirect(url_for('home'))	
+	
 @github.tokengetter
 def get_github_oauth_token():
     return session.get('github_token')
