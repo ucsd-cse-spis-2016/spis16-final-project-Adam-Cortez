@@ -140,9 +140,14 @@ def notes():
         flash("You must be logged in to do that",'error')
         return redirect(url_for('home')) 
 	login = session['user_data']['login']
-    title = mongo.db.mycollection.find({'login':login})[-1].title
-	content = title = mongo.db.mycollection.find({'login':login})[-1].content
-    return render_template('notes.html', title=title, content=content)
+	userinputs = [x for x in mongo.db.mycollection.find({'login':login})]
+	if len(userinputs) > 0:
+		title = userinputs[-1].title
+		content = userinputs[-1].content
+	else:
+		title = ""
+		content = ""
+	return render_template('notes.html', title=title, content=content)
 
 @app.route('/write',methods=['POST'])
 def write():
