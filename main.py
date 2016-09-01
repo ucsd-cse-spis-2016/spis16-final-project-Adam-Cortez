@@ -3,6 +3,7 @@ from flask_oauthlib.client import OAuth
 from github import Github
 from flask_pymongo import PyMongo
 from flask_pymongo import ObjectId
+from bson.objectid import ObjectId
 
 import pprint
 import os
@@ -132,7 +133,7 @@ def authorized():
     else:
         flash('You were successfully logged in')
 
-    return redirect(url_for('home'))       
+    return redirect(url_for('home'))
 
 @app.route('/notes')
 def notes():
@@ -149,42 +150,89 @@ def new_note():
         flash("You must be logged in to do that",'error')
         return redirect(url_for('home'))
     login = session['user_data']['login']
-    title = "Untitled Note"
-    mongo.db.mycollection.insert_one(
+    title = "New Note"
+    result = mongo.db.mycollection.insert_one(
     {
         "title"   : title, 
         "text"    : "",
      	"login"   : login
     }
     )
-    return redirect('/note/'+title)
+    return redirect('/note/'+str(result.inserted_id))
 
-@app.route('/note/<title>')
-def note_title(title):
+@app.route('/note/<oid>')
+def note_oid(oid):
     if not is_logged_in():
         flash("You must be logged in to do that",'error')
         return redirect(url_for('home'))
     login = session['user_data']['login']
-    notes = [x for x in mongo.db.mycollection.find({'title': title})]
-    return render_template('note_title.html', note=notes[0])
+    note = mongo.db.mycollection.find_one({'_id': ObjectId(oid)})
+    if not 'login' in note:
+        flash("Error opening note with oid " + repr(oid) + "; could not determine user for record",
+              "error")
+        return redirect(url_for('home'))
+    elif note['login'] != login:              
+        flash("Cannot open note with oid " + 
+              repr(oid) + " belonging to user " + note['login'],'error')
+        return redirect(url_for('home'))
+    return render_template('note_oid.html', note=note)
 
-@app.route('/write',methods=['POST'])
-def write():
+@app.route('/save/<oid>',methods=['POST'])
+def save(oid):
     if not is_logged_in():
         flash("You must be logged in to do that",'error')
         return redirect(url_for('home'))    
     title = request.form.get("title") # match "id", "name" in form
     text = request.form.get("text") # match "id", "name" in form
-    login = session['user_data']['login']    
-    result = mongo.db.mycollection.insert_one(
+    login = session['user_data']['login']
+    note = mongo.db.mycollection.find_one({'_id': ObjectId(oid)})
+    if not 'login' in note:
+        flash("Error saving note with oid " + repr(oid) + "; could not determine user for record",
+              "error")
+        return redirect(url_for('home'))
+    elif note['login'] != login:              
+        flash("Cannot save note with oid " + 
+              repr(oid) + " belonging to user " + note['login'],'error')
+        return redirect(url_for('home'))
+        
+    result = mongo.db.mycollection.replace_one(
     {
-                "title"   : title, 
-                "text"    : text,
-                "login"   : login
+        '_id': ObjectId(oid),
+    },
+    {
+        "title"   : title, 
+        "text"    : text,
+        "login"   : login
     }
     )
-    flash("Saved to database with oid=" + str(result.inserted_id))
-    return redirect(url_for('home'))	
+    return redirect(url_for('notes'))	
+
+@app.route('/delete/<oid>',methods=['POST'])
+def delete(oid):
+    if not is_logged_in():
+        flash("You must be logged in to do that",'error')
+        return redirect(url_for('home'))    
+    title = request.form.get("title") # match "id", "name" in form
+    text = request.form.get("text") # match "id", "name" in form
+    login = session['user_data']['login']
+    note = mongo.db.mycollection.find_one({'_id': ObjectId(oid)})
+    if not 'login' in note:
+        flash("Error deleting note with oid " + repr(oid) + "; could not determine user for record",
+              "error")
+        return redirect(url_for('home'))
+    elif note['login'] != login:              
+        flash("Cannot delete note with oid " + 
+              repr(oid) + " belonging to user " + note['login'],'error')
+        return redirect(url_for('home'))
+        
+    result = mongo.db.mycollection.delete_one({'_id': ObjectId(oid),'login':login})
+    if result.deleted_count == 0:
+        flash("Error: Note with oid " + repr(oid) + " was not deleted",'error')
+    elif result.deleted_count == 1:
+        flash("Note with oid " + repr(oid) + " deleted")
+    else:
+        flash("Error: Unexpected result.deleted_count=" + str(result.deleted_count))
+    return redirect(url_for('notes'))	
 
 @github.tokengetter
 def get_github_oauth_token():

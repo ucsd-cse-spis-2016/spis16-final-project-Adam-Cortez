@@ -5,29 +5,37 @@
   {%  block content %}
     <h1>Notes</h1>
     <form action="/newnote">     
-         <button>New Note</button>
+        <button>New Note</button>
     </form>
 
     {% if notes|length > 0 %}
-    <br>		
-    <table style="width:100%">
-      <tr>
-       <th>Title</th>
-       <th>Text</th>
-      </tr>
-     {% for n in notes %}
-     
-      <tr>
-	<td>
-	 <form action="/note/{{n['title']}}">
-         <button>{{n["title"]}}</button>
-     </form>
-	</td>
-	<td>
-         <textarea readonly>{{n["text"]}}</textarea>
-	</td>
-      </tr>
-     {% endfor %}
+        <br>		
+        <table cellpadding="100">
+            <tr>
+                <th></th>
+                <th>Title</th>
+                <th>Text</th>
+            </tr>
+            {% for note in notes %}
+                <tr>
+                    <td>
+                        <form name="delete_{{note['id']}}" method="post" action="/delete/{{note['id']}}">
+	                        <a href="#" onclick="document.forms['delete_{{note._id}}'].submit();">
+	                            <span class="glyphicon glyphicon-remove"></span>
+	                        </a>
+                      </form>
+	                </td>
+	                <td>
+	                    <form action="/note/{{note['_id']}}">
+                            <button>{{note["title"]}}</button>
+                        </form>
+	                </td>
+	                <td>
+                        <textarea readonly>{{note["text"]}}</textarea>
+	                </td>
+                </tr>
+            {% endfor %}
+         </table>
     {% endif %}
-     </table>
+     
 	{%  endblock %}
