@@ -140,23 +140,26 @@ def notes():
         flash("You must be logged in to do that",'error')
         return redirect(url_for('home')) 
     login = session['user_data']['login']
-    userinputs = [x for x in mongo.db.mycollection.find({'login':login})]
-    if len(userinputs) > 0:
-	title = userinputs[-1]["title"]
-	content = userinputs[-1]["content"]
-    else:
-	title = ""
-	content = ""
-    return render_template('notes.html', title=title, content=content)
+    notes = [x for x in mongo.db.mycollection.find({'login':login})]
+    return render_template('notes.html', notes=notes)
 
-@app.route('/history')
-def history():
+@app.route('/note/<title>')
+def note_title(title):
     if not is_logged_in():
         flash("You must be logged in to do that",'error')
-        return redirect(url_for('home'))    
+        return redirect(url_for('home'))
     login = session['user_data']['login']
-    userinputs = [x for x in mongo.db.mycollection.find({'login':login})]
-    return render_template('history.html',userinputs = userinputs,login=login)
+    notes = [x for x in mongo.db.mycollection.find({'title': title})]
+    if len(notes) == 0:
+	mongo.db.mycollection.insert_one(
+            {
+                "title"   : title, 
+                "text"    : "",
+                "login"   : login
+            }
+        )
+	notes = [x for x in mongo.db.mycollection.find({'title': title})]
+    return render_template('note_title.html', note=notes[0])
 
 @app.route('/write',methods=['POST'])
 def write():
@@ -164,12 +167,12 @@ def write():
         flash("You must be logged in to do that",'error')
         return redirect(url_for('home'))    
     title = request.form.get("title") # match "id", "name" in form
-    content = request.form.get("content") # match "id", "name" in form
+    text = request.form.get("text") # match "id", "name" in form
     login = session['user_data']['login']    
     result = mongo.db.mycollection.insert_one(
             {
                 "title"   : title, 
-                "content" : content,
+                "text"    : text,
                 "login"   : login
             }
         )

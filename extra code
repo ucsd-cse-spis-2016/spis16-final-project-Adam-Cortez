@@ -1,0 +1,97 @@
+<form action="/write" method="POST">
+	  <tr>
+            <td>
+		<input name="title" id="title" width="30" value = "{{title}}"></input>
+	    </td>
+	  </tr>
+		<tr>
+		   <td>
+			<textarea name="text" id="text" cols="50" rows="4">{{text}}</textarea>
+		    </td>
+		</tr>
+		<tr>
+		  <td>
+		    <input type="submit" value="Save">
+		  </td>
+		</tr>
+	</form>
+
+
+
+
+
+<!-- Include stylesheet -->
+		<link href="https://cdn.quilljs.com/1.0.0-rc.2/quill.snow.css" rel="stylesheet">
+
+		<!-- Create the editor container -->
+		
+
+		<!-- Include the Quill library -->
+		<script src="https://cdn.quilljs.com/1.0.0-rc.2/quill.js"></script>
+		
+		<!-- Initialize Quill editor -->
+		<script type="text/javascript">
+		  var quill = new Quill('#editor',
+		  {
+	            modules:
+		    {
+  		      toolbar: [[{ 'size': ['small', false, 'large', 'huge'] }],
+				['bold', 'italic', 'underline', 'strike'], 
+  				[{ 'list': 'ordered'}, { 'list': 'bullet' }],
+  				[{ 'script': 'sub'}, { 'script': 'super' }],
+				[{ 'color': [] }], 
+  				[{ 'font': [] }],
+  				[{ 'align': [] }]]
+		    },
+		    theme: 'snow'
+		  });
+
+
+		<script>
+		$( document ).ready(function() {
+ 		 tinymce.init({ selector:'textarea' });
+		});
+		 function post(title) {
+		      method = "post"; 
+
+		      var form = document.createElement("form");
+		      form.setAttribute("method", method);
+		      form.setAttribute("action", "/save/"+title);
+
+		      var hiddenField = document.createElement("input");
+		      hiddenField.setAttribute("type", "hidden");
+		      hiddenField.setAttribute("name", "text");
+		      hiddenField.setAttribute("value", $("#editor").html());
+
+		      form.appendChild(hiddenField);
+
+		      document.body.appendChild(form);
+		      form.submit();
+		    }
+		</script>
+
+
+
+
+
+<button onclick="post('{{d['title']}}')">Save</button>
+
+
+
+
+@app.route('/save/<title>',methods=['POST'])
+def save_title(title):
+    if not is_logged_in():
+        flash("You must be logged in to do that",'error')
+        return redirect(url_for('home'))    
+    text = request.form.get("text") # match "id", "name" in form
+    login = session['user_data']['login']    
+    result = mongo.db.mycollection.insert_one(
+            {
+                "title"   : title, 
+                "text"    : text,
+                "login"   : login
+            }
+        )
+    flash("Saved to database with oid=" + str(result.inserted_id))
+    return redirect(url_for('home'))	

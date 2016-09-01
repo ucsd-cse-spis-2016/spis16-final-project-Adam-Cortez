@@ -1,0 +1,15 @@
+{%  extends "layout.html" %}
+
+	{%  block title %}Notes{%  endblock %}
+
+	{%  block content %}
+		<form action="/write" method="POST">
+			<input name="title" id="title" width="30" value={{note['title']}}></input>
+			<br>
+			<textarea name="text" id="text" cols="50" rows="4">
+			  {{note['text']}}
+		       	</textarea>
+			<br>
+			<input type="submit" value="Save">
+		</form>
+	{%  endblock %}
