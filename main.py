@@ -150,10 +150,9 @@ def new_note():
         flash("You must be logged in to do that",'error')
         return redirect(url_for('home'))
     login = session['user_data']['login']
-    title = "New Note"
     result = mongo.db.mycollection.insert_one(
     {
-        "title"   : title, 
+        "title"   : "Untitled Note", 
         "text"    : "",
      	"login"   : login
     }
@@ -205,6 +204,7 @@ def save(oid):
         "login"   : login
     }
     )
+    flash(mongo.db.mycollection.find_one({'_id': ObjectId(oid)})["title"]+" saved") #could just use title but want to get it from note
     return redirect(url_for('notes'))	
 
 @app.route('/delete/<oid>',methods=['POST'])
@@ -212,8 +212,6 @@ def delete(oid):
     if not is_logged_in():
         flash("You must be logged in to do that",'error')
         return redirect(url_for('home'))    
-    title = request.form.get("title") # match "id", "name" in form
-    text = request.form.get("text") # match "id", "name" in form
     login = session['user_data']['login']
     note = mongo.db.mycollection.find_one({'_id': ObjectId(oid)})
     if not 'login' in note:
@@ -229,7 +227,7 @@ def delete(oid):
     if result.deleted_count == 0:
         flash("Error: Note with oid " + repr(oid) + " was not deleted",'error')
     elif result.deleted_count == 1:
-        flash("Note with oid " + repr(oid) + " deleted")
+        flash(note["title"]+" deleted")
     else:
         flash("Error: Unexpected result.deleted_count=" + str(result.deleted_count))
     return redirect(url_for('notes'))	

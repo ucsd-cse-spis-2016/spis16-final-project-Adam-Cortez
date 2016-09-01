@@ -9,8 +9,8 @@
     </form>
 
     {% if notes|length > 0 %}
-        <br>		
-        <table cellpadding="100">
+        <br>
+        <table>
             <tr>
                 <th></th>
                 <th>Title</th>
@@ -19,7 +19,7 @@
             {% for note in notes %}
                 <tr>
                     <td>
-                        <form name="delete_{{note['id']}}" method="post" action="/delete/{{note['id']}}">
+                        <form name="delete_{{note['_id']}}" method="post" action="/delete/{{note['_id']}}">
 	                        <a href="#" onclick="document.forms['delete_{{note._id}}'].submit();">
 	                            <span class="glyphicon glyphicon-remove"></span>
 	                        </a>
@@ -31,7 +31,7 @@
                         </form>
 	                </td>
 	                <td>
-                        <textarea readonly>{{note["text"]}}</textarea>
+                        <textarea readonly rows="5" cols="50">{{note["text"]}}</textarea>
 	                </td>
                 </tr>
             {% endfor %}
