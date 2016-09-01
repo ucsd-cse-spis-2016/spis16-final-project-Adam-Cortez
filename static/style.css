@@ -1,25 +1,26 @@
-body {
+body
+{
 	background-color: #eef;
 }
 
-#content {
+#content
+{
 	margin-left: 20px;
 }
 
-div.flash-messages {
+div.flash-messages
+{
 	min-height: 4em;
 }
 
-table {
-    
-    
+table, th, td
+{
+    padding:7px;
+    vertical-align: top;
 }
 
-table * td {
-    padding:5px;
-}
-
-.note {
+.note
+{
     border: 1px solid black;
     padding: 0.5em;
     background-color: white;
