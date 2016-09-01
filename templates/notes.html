@@ -31,7 +31,9 @@
                         </form>
 	                </td>
 	                <td>
-                        <textarea readonly rows="5" cols="50">{{note["text"]}}</textarea>
+                       <div class="note">
+                        {{note["text"]|safe}}
+                       </div>
 	                </td>
                 </tr>
             {% endfor %}
