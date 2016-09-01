@@ -4,7 +4,7 @@
 
   {%  block content %}
     <h1>Notes</h1>
-    <form action="/note/SampleTitle">     
+    <form action="/newnote">     
          <button>New Note</button>
     </form>
 
@@ -20,9 +20,8 @@
       <tr>
 	<td>
 	 <form action="/note/{{n['title']}}">
-         
          <button>{{n["title"]}}</button>
-         </form>
+     </form>
 	</td>
 	<td>
          <textarea readonly>{{n["text"]}}</textarea>
