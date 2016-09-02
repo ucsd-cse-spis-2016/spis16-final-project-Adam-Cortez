@@ -133,7 +133,7 @@ def authorized():
     else:
         flash('You were successfully logged in')
 
-    return redirect(url_for('home'))
+    return redirect(url_for('notes'))
 
 @app.route('/notes')
 def notes():
@@ -142,7 +142,40 @@ def notes():
         return redirect(url_for('home')) 
     login = session['user_data']['login']
     notes = [x for x in mongo.db.mycollection.find({'login':login})]
-    return render_template('notes.html', notes=notes)
+    return render_template('notes.html', notes=notes, searchString = "")
+
+@app.route('/notesFiltered/<searchString>')
+def notesFiltered(searchString):
+    if not is_logged_in():
+        flash("You must be logged in to do that",'error')
+        return redirect(url_for('home'))
+    login = session['user_data']['login']
+    notes = [x for x in mongo.db.mycollection.find({'login':login})]
+    filteredNotes = []
+    for note in notes:
+        if searchString in note['title'] or searchString in note['text']:
+            filteredNotes.append(note)
+    return render_template('notes.html', notes=filteredNotes, searchString = searchString)
+
+@app.route('/search', methods=['POST'])
+def search():
+    return redirect('/notesFiltered/'+request.form.get("searchString"))
+
+@app.route('/notesTitleSortedAlphabetically')
+def notesTitleSortedAlphabetically():
+    if not is_logged_in():
+        flash("You must be logged in to do that",'error')
+        return redirect(url_for('home'))
+    login = session['user_data']['login']
+    notes = [x for x in mongo.db.mycollection.find({'login':login})]
+    sortedTitles=[]
+    for note in notes:
+        sortedTitles.append(note["title"])
+    sortedTitles.sort()
+    sortedNotes = []
+    for title in sortedTitles:
+        sortedNotes.extend([note for note in notes if note["title"] == title])
+    return render_template('notes.html', notes=sortedNotes, searchString = "")
 
 @app.route('/newnote')
 def new_note():

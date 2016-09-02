@@ -19,7 +19,7 @@
         </script>
 
 		<form action="/save/{{note['_id']}}" method="POST">
-			<input name="title" id="title" width="30" value="{{note['title']}}"></input>
+			<input name="title" id="title" width="30" value="{{note['title']}}" required></input>
 			<br><br>
 			<textarea name="text" id="text">
 				{{note['text']}}

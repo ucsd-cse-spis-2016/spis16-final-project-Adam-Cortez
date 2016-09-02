@@ -3,11 +3,31 @@
   {%  block title %}Notes{%  endblock %}
 
   {%  block content %}
-    <h1>Notes</h1>
+    {% if searchString == "" %}
+        <h1>Notes</h1>
+    {% else %}
+        <h1>
+            {% if notes|length == 0%}
+                No
+            {% endif %}
+            Search Results for "{{searchString}}"
+        </h1>
+    {% endif %}
     <form action="/newnote">     
-        <button>New Note</button>
+        <input type="submit" value="New Note">
     </form>
-
+    
+    {% if notes|length > 0 or (not(searchString == ""))%}
+        <br>
+        <form action="/search" method="POST">
+            <input name="searchString" id="searchString" width="30" required></input>
+            <input type="submit" value="Search">
+        </form>
+        <br>
+        <form action="/notesTitleSortedAlphabetically">
+            <input type="submit" value="Sort Title Alphabetically">
+        </form>
+    {% endif %}
     {% if notes|length > 0 %}
         <br>
         <table>
