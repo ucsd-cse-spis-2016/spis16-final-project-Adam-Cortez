@@ -1,0 +1,13 @@
+{%  extends "layout.html" %}
+
+	{%  block title %}{{note['title']}}{%  endblock %}
+
+	{%  block content %}
+        Copy your browser's URL and show it to others to let them view this note!
+        <br><br>
+        <h2>{{note["title"]}}</h2>
+        <br><br>
+        <div class="note">
+            {{note["text"]|safe}}
+        </div>
+	{%  endblock %}

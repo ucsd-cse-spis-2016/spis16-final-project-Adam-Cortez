@@ -209,6 +209,11 @@ def note_oid(oid):
         return redirect(url_for('home'))
     return render_template('note_oid.html', note=note)
 
+@app.route('/view_note/<oid>')
+def view_note_oid(oid):
+    note = mongo.db.mycollection.find_one({'_id': ObjectId(oid)})
+    return render_template('view_note_oid.html', note=note)
+
 @app.route('/save/<oid>',methods=['POST'])
 def save(oid):
     if not is_logged_in():

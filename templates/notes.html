@@ -1,6 +1,6 @@
 {%  extends "layout.html" %}
 
-  {%  block title %}Notes{%  endblock %}
+  {%  block title %}My Notes{%  endblock %}
 
   {%  block content %}
     {% if searchString == "" %}
@@ -54,6 +54,11 @@
                        <div class="note">
                         {{note["text"]|safe}}
                        </div>
+	                </td>
+                    <td>
+                        <form action="/view_note/{{note['_id']}}">     
+                            <input type="submit" value="Public View">
+                        </form>
 	                </td>
                 </tr>
             {% endfor %}
