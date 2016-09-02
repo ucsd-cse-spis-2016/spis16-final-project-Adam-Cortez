@@ -14,13 +14,13 @@
                 "insertdatetime media nonbreaking save table contextmenu directionality",
                 "emoticons template paste textcolor colorpicker textpattern imagetools"
             ],
-            toolbar1: "fontselect fontsizeselect bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | forecolor backcolor emoticons"
+            toolbar1: "fontselect fontsizeselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent | forecolor backcolor | emoticons"
         });
         </script>
 
 		<form action="/save/{{note['_id']}}" method="POST">
 			<input name="title" id="title" width="30" value="{{note['title']}}"></input>
-			<br>
+			<br><br>
 			<textarea name="text" id="text">
 				{{note['text']}}
 		    </textarea>
